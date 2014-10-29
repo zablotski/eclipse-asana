@@ -32,7 +32,7 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
 		MessageDialog.openInformation(
 			window.getShell(),
 			"Eclipse-asana",
-			"Hello, Eclipse world!"
+			"Hello, PWR"
 			+ " Asana Ready!");
 	}
 
