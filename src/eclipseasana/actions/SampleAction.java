@@ -33,7 +33,7 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
 			window.getShell(),
 			"Eclipse-asana",
 			"Hello, PWR"
-			+ " Asana Ready!!");
+			+ " Asana Ready!");
 	}
 
 	/**
