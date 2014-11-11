@@ -1,0 +1,15 @@
+BDD - frameworki do testowania (akceptacyjnego):
+
+Jbehave - Java
+
+Cucumber
+
+Code review - Gitlab (do tego nizej tez)
+
+Ci¹g³a integracja (to jest taki przyk³ad praktyki - do niektorych praktyk nie wystarczy samo "tak robiliœmy" tylko trzeba u¿ywaæ narzêdzi, które umo¿liwiaj¹ w ogóle pracê wedle praktyki)
+
+Specyfikacja wymagañ - Backlog ca³ego projektu, ¿eby móc ju¿ ustawiaæ taski w sprincie
+
+Poszukaæ niuansów zwi¹zanych z metodykami agile
+
+Opis swojej metodyki - jakie narzêdzia, jakie praktyki, jakie wartoœci
