@@ -18,7 +18,7 @@ public class StepDefinitions {
     }
 
     @When("^I wait (\\d+) hour$")
-    public void i_wait_hour(int waitingTime)   throws Throwable {
+    public void i_wait_hour(int waitingTime) throws Throwable {
         this.waitingTime = waitingTime;
     }
 
