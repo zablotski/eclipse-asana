@@ -1,5 +1,6 @@
 package test;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -8,23 +9,24 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class StepDefinitions {
-    private Belly belly;
-    private int waitingTime;
 
-    @Given("^I have (\\d+) cukes in my belly$")
-    public void i_have_cukes_in_my_belly(int cukes) throws Throwable {
-        belly = new Belly();
-        belly.eat(cukes);
+    @Given("^login to app$")
+    public void login_to_app() throws Throwable {
+        // Write code here that turns the phrase above into concrete actions
+        throw new PendingException();
     }
 
-    @When("^I wait (\\d+) hour$")
-    public void i_wait_hour(int waitingTime) throws Throwable {
-        this.waitingTime = waitingTime;
+    @When("^login with e-mail \"(.*?)\" and api-key \"(.*?)\"$")
+    public void login_with_e_mail_and_api_key(String arg1, String arg2) throws Throwable {
+        // Write code here that turns the phrase above into concrete actions
+        throw new PendingException();
     }
 
-    @Then("^my belly should (.*)$")
-    public void my_belly_should_growl(String expectedSound) throws Throwable {
-        String actualSound = belly.getSound(waitingTime);
-        assertThat(actualSound, is(expectedSound));
+    @Then("^A user loginned$")
+    public void a_user_loginned() throws Throwable {
+        // Write code here that turns the phrase above into concrete actions
+        throw new PendingException();
     }
+
+
 }
