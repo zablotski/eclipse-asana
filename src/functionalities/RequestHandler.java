@@ -16,7 +16,7 @@ public class RequestHandler {
         return ourInstance;
     }
     
-    private RequestHandler() {
+    public RequestHandler() {
     }
 	
 	public String asanaApiJsonRequest(String url, String httpMethod, String jsonData, List<SimpleEntry<String, String>> headers) throws Exception{	

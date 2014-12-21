@@ -1,16 +1,9 @@
 package functionalities;
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.JsonArray;
-import gherkin.deps.com.google.gson.JsonElement;
-import gherkin.deps.com.google.gson.JsonObject;
-import gherkin.deps.com.google.gson.JsonParser;
+import org.json.*;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import javax.xml.bind.DatatypeConverter;
 
 public final class LoginHandler {
@@ -22,12 +15,17 @@ public final class LoginHandler {
 	private String asanaApiKey = "5aix9w1X.93qkODiCZmG2EBSZ92EbteK"; //temporary hard-coded
 	private String asanaEmail;
 	private boolean isAuthorized = false;
+	private RequestHandler requestHandler = RequestHandler.getInstance();
     
 	public static LoginHandler getInstance() {
         return ourInstance;
     }
  
-    private LoginHandler() {
+    public LoginHandler(RequestHandler rq) {
+    	this.requestHandler = rq;
+    }
+    
+    public LoginHandler() {
     	
     }
     
@@ -40,7 +38,7 @@ public final class LoginHandler {
     	this.asanaApiKey = apiKey;
     	
     	//porownaj wynik testConnection z username i jak sie zgodzi to hula
-    	//isAuthorized = ...
+    	isAuthorized = testConnection(asanaApiKey, asanaEmail);
     	
     	return isAuthorized;
     }
@@ -50,21 +48,22 @@ public final class LoginHandler {
     	return new SimpleEntry<String, String>(AUTHORIZATION_HTTP_HEADER_NAME, BASE_64_AUTHORIZATION_HTTP_HEADER_VALUE_PREFIX + encodedApiKey);
     }
     
-    public boolean testConnection(String apiKey){
+    public boolean testConnection(String apiKey, String email){
     	List<SimpleEntry<String, String>> headers = new ArrayList<>();
     	headers.add(getAuthorizationHeader());
-    	JsonParser jsonParser = new JsonParser();
-    	JsonObject json = new JsonObject();
+    	JSONObject json;
 
     	try{
-    		json = (JsonObject)jsonParser.parse(RequestHandler.getInstance().asanaApiJsonRequest(TEST_CONNECTION_URL, "GET", null, headers));
+    		json = new JSONObject(requestHandler.asanaApiJsonRequest(TEST_CONNECTION_URL, "GET", null, headers));
+    		
+    		if(json.getJSONObject("data").getString("email").equals(email)){
+    			return true;
+    		}
     	} catch (Exception e){
     		return false;
     	}
-    	
-    	JsonArray it = json.getAsJsonArray();
-    	
-    	return true;
+
+    	return false;
     }
     
     
