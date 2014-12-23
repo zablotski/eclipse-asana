@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="src/libs/asana-0.5.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/libs/guava-15.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/libs/jackson-core-asl-1.9.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/libs/jackson-jaxrs-1.9.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/libs/jackson-mapper-asl-1.9.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/libs/jersey-client-1.17.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/libs/jersey-core-1.17.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/libs/junit-4.11.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

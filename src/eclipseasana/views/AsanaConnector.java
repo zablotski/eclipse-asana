@@ -1,21 +1,38 @@
 package eclipseasana.views;
 
 
-import java.awt.TextField;
+import net.joelinn.asana.Asana;
+import net.joelinn.asana.users.User;
+import net.joelinn.asana.workspaces.Workspace;
+import net.joelinn.asana.workspaces.Workspaces;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.fieldassist.*;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
-import org.eclipse.swt.widgets.Menu;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ViewPart;
 
 import functionalities.LoginHandler;
 
@@ -149,6 +166,13 @@ public class AsanaConnector extends ViewPart {
 		          }
 		        }
 		      });
+		
+		Asana asana = new Asana("5akl1GKq.TNjBXubjHJy5q58E7DZyqTS");
+		Workspaces ww = asana.workspaces().getWorkspaces();
+		User uu = asana.users().getMe();
+		System.out.println(uu.email);		
+		System.out.println(uu.name);
+		
 		
 		
 		
