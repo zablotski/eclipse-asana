@@ -18,7 +18,6 @@ public class RequestHandler {
     
     public RequestHandler() {
     }
-	
 	public String asanaApiJsonRequest(String url, String httpMethod, String jsonData, List<SimpleEntry<String, String>> headers) throws Exception{	
 		URL urlObject;
 		HttpURLConnection connection = null;  

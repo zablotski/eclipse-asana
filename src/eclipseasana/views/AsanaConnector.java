@@ -8,6 +8,7 @@ import org.eclipse.ui.part.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.fieldassist.*;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.jface.action.*;
@@ -15,6 +16,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
+
+import functionalities.LoginHandler;
+
 
 
 /**
@@ -44,6 +48,7 @@ public class AsanaConnector extends ViewPart {
 	
 	private static final String LOGIN_LABEL_TEXT = "Panel logowania";
 
+	private LoginHandler loginObject;
 	//private TableViewer viewer;
 	private Action action1;
 	private Action action2;
@@ -51,6 +56,7 @@ public class AsanaConnector extends ViewPart {
 	private Label loginLabel;
 	private Text loginTextField;
 	private Text passwordTextField;
+	private Button loginButton;
 	private Composite cp1;
 	private Composite cp2;
 	/*
@@ -111,16 +117,40 @@ public class AsanaConnector extends ViewPart {
 		
 		cp1 = new Composite(parent, SWT.NONE);
 		cp1.setLayout(new RowLayout());
+		
 		cp2 = new Composite(parent, SWT.NONE);
 		cp2.setLayout(new RowLayout());
 		
-		stackLayout.topControl = cp1;
+		stackLayout.topControl = cp1; 
 		
 		loginLabel = new Label(cp1, SWT.NONE);
 		loginLabel.setText(LOGIN_LABEL_TEXT);
 		
-		loginTextField = new Text(cp2, SWT.BORDER);
-		passwordTextField = new Text(cp2, SWT.BORDER);
+		loginTextField = new Text(cp1, SWT.BORDER);
+		passwordTextField = new Text(cp1, SWT.BORDER);
+		
+		loginButton = new Button(cp1, SWT.PUSH);
+		loginButton.setText("OK");
+		loginButton.addListener(SWT.Selection, new Listener() {
+		      public void handleEvent(Event e) {
+		          switch (e.type) {
+		          case SWT.Selection:
+		      		loginObject = new LoginHandler();
+		      		try {
+		      			if(loginObject.login(loginTextField.getText(), passwordTextField.getText())){
+		      				loginLabel.setText("Zajebiście");
+		      			}
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+		      		
+		            break;
+		          }
+		        }
+		      });
+		
+		
 		
 		
 		
@@ -140,9 +170,6 @@ public class AsanaConnector extends ViewPart {
 				AsanaConnector.this.fillContextMenu(manager);
 			}
 		});
-		/*Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);*/
 	}
 
 	private void contributeToActionBars() {
