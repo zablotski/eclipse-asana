@@ -26,5 +26,19 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="eclipse-asana"
+            name="Asana Teamwork">
+      </category>
+      <view
+            category="eclipse-asana"
+            class="eclipseasana.views.AsanaConnector"
+            icon="icons/sample.gif"
+            id="eclipseasana.views.AsanaConnector"
+            name="Asana Connector">
+      </view>
+   </extension>
 
 </plugin>

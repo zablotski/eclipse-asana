@@ -8,3 +8,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ src/libs/asana-0.5.8.jar,
+ src/libs/guava-15.0.jar,
+ src/libs/jackson-core-asl-1.9.13.jar,
+ src/libs/jackson-jaxrs-1.9.13.jar,
+ src/libs/jackson-mapper-asl-1.9.13.jar,
+ src/libs/jersey-client-1.17.1.jar,
+ src/libs/jersey-core-1.17.1.jar,
+ src/libs/junit-4.11.jar
