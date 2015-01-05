@@ -1,37 +1,14 @@
 package eclipseasana.views;
 
-import net.joelinn.asana.Asana;
-import net.joelinn.asana.users.User;
-import net.joelinn.asana.workspaces.Workspace;
-import net.joelinn.asana.workspaces.Workspaces;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+
+import functionalities.ApplicationContext;
+import resources.StringResources;
 
 //import functionalities.LoginHandler;
 
@@ -39,60 +16,55 @@ import org.eclipse.ui.part.ViewPart;
 public class AsanaConnector extends ViewPart {
 
 	public static final String ID = "eclipseasana.views.AsanaConnector";
-
-	private static final String LOGIN_LABEL_TEXT = "Your API KEY: ";
-
-	//private LoginHandler loginObject;
-	// private TableViewer viewer;
-	private Composite parent;
-	private StackLayout stackLayout;
-//	private Action action1;
-//	private Action action2;
-//	private Action doubleClickAction;
-	private Label loginLabel;
-	private Label loginResult;
-	private Text loginTextField;
-	private Button loginButton;
-	private Composite cp1;
-	private Composite cp2;
-	private Asana asana;
+	private StringResources stringResources = StringResources.getInstance();
+	private LoginUI loginPanel;
+	private WorkspacesUI workspacesPanel;
+	private ProjectsUI projectsPanel;
+	private ApplicationContext appContext = new ApplicationContext();
+	private Composite mainViewPanel;
+	private ViewManager viewManager;
 
 	public void createPartControl(Composite parent) {
-		this.parent = parent;
-		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-		stackLayout = new StackLayout();
-		parent.setLayout(stackLayout);
+		//stack layout is good for many forms in one view
+		//parent.setLayout(new FillLayout());
+		mainViewPanel = new Composite(parent, SWT.NONE);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.type = SWT.VERTICAL;
+		mainViewPanel.setLayout(rowLayout);
 
-		cp1 = new Composite(parent, SWT.NONE);
-		cp1.setLayout(new RowLayout());
+		//Init all views
+		loginPanel = new LoginUI(mainViewPanel, SWT.NONE);
+		workspacesPanel = new WorkspacesUI(mainViewPanel, SWT.NONE);
+		projectsPanel = new ProjectsUI(mainViewPanel, SWT.NONE);
+		viewManager = new ViewManager(loginPanel, workspacesPanel, projectsPanel);
+		
+		//Set view
+		viewManager.setView(AbstractView.BEFORE_LOGIN);
 
-		cp2 = new Composite(parent, SWT.NONE);
-		cp2.setLayout(new RowLayout());
-
-		stackLayout.topControl = cp1;
-
-		loginLabel = new Label(cp1, SWT.NONE);
-		loginLabel.setText(LOGIN_LABEL_TEXT);
-
-		loginTextField = new Text(cp1, SWT.BORDER);
-		loginButton = new Button(cp1, SWT.PUSH);
-
-		loginResult = new Label(cp1, SWT.NONE);
-		loginResult.setText("!");
-
-		loginButton.setText("OK");
-		loginButton.addListener(SWT.Selection, new Listener() {
+		loginPanel.getLoginButton().addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
 					try {
-						asana = new Asana(loginTextField.getText());
-						System.out.println("Your email: "
+						appContext.initAsana(loginPanel.getKeyTextField().getText(), loginPanel.getEmailTextField().getText());
+						viewManager.setView(AbstractView.AFTER_LOGIN);
+						workspacesPanel.feedWorkspacesCombo(appContext.getAvailableWorkspaces());
+						loginPanel.setLoginSuccessMessage(appContext.getCurrentUser().name);
+						
+						
+						
+						//Dodaj przycisk "przegl¹daj taski", który ukryje ca³y widok dotychczasowy i odkryje widok listy tasków;
+						
+						//Dodaj akcjê wyboru szczegó³ów taska, która ukryje to co by³o do tej pory w widoku i poka¿e formatkê szczegó³ów taska
+						
+						//
+						
+						/*System.out.println("Your email: "
 								+ asana.users().getMe().email + ", your Name: "
 								+ asana.users().getMe().name);
 						loginResult.setText("Your email: "
 								+ asana.users().getMe().email + ", your Name: "
-								+ asana.users().getMe().name); //jak zakomentowaÄ‡ powyÅ¼sze, to wyÅ›wietli, dlaczego, to ja nie wiem =)
+								+ asana.users().getMe().name); //jak zakomentowaÄ‡ powyÅ¼sze, to wyÅ›wietli, dlaczego, to ja nie wiem =)*/
 						
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
@@ -106,7 +78,7 @@ public class AsanaConnector extends ViewPart {
 	}
 
 	public void setFocus() {
-		loginLabel.setFocus();
+		loginPanel.getEmailTextField().setFocus();
 		
 	}
 
