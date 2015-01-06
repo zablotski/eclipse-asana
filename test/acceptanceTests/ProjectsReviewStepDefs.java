@@ -49,8 +49,8 @@ public class ProjectsReviewStepDefs {
 	    workspaceProjects = application.getAvailableProjectsInWorkspace();
 	}
 
-	@Then("^list contains \\[\"(.*?)\"\\]$")
-	public void list_contains(String arg1) throws Throwable {
+	@Then("^projects list contains \"(.*?)\"$")
+	public void projects_list_contains(String arg1) throws Throwable {
 		String availableProjectsNames = "";
 	    
 
@@ -67,6 +67,7 @@ public class ProjectsReviewStepDefs {
 	@Given("^user choose workspace \"(.*?)\"$")
 	public void user_choose_workspace(String arg1) throws Throwable {
 		user_chosen_as_setWorkspace(arg1);
+		workspaceProjects = application.getAvailableProjectsInWorkspace();
 	}
 
 	@When("^user pick \"(.*?)\" from projects drop down list$")

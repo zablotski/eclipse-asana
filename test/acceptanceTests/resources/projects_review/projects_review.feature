@@ -7,7 +7,7 @@ Feature: Projects review
 		Given user is logged in as <email>
 		And user chosen <workspaceName> as setWorkspace
 		When user clicks projects drop down list
-		Then list contains <projectsList>
+		Then projects list contains <projectsList>
 		
 	Examples:
     |  email                     |  workspaceName                |  projectsList   |

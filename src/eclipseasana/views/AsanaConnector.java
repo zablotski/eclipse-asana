@@ -59,7 +59,7 @@ public class AsanaConnector extends ViewPart {
 			}
 		});
 		
-		workspacesPanel.getWorkspacesCombo().addListener(SWT.DefaultSelection, new Listener() {
+		workspacesPanel.getWorkspacesCombo().addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
@@ -77,7 +77,7 @@ public class AsanaConnector extends ViewPart {
 			} 
 		});
 		
-		projectsPanel.getProjectsCombo().addListener(SWT.DefaultSelection, new Listener() {
+		projectsPanel.getProjectsCombo().addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
