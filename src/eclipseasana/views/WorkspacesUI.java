@@ -46,4 +46,8 @@ public class WorkspacesUI {
 		verticalPanel.setVisible(value);
 	}
 
+	public Combo getWorkspacesCombo() {
+		return workspacesCombo;
+	}
+
 }

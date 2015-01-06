@@ -5,6 +5,7 @@ import java.util.List;
 import resources.StringResources;
 import models.TaskTreeNode;
 import net.joelinn.asana.projects.Project;
+import net.joelinn.asana.projects.Projects;
 import net.joelinn.asana.tasks.Task;
 import net.joelinn.asana.tasks.Tasks;
 import net.joelinn.asana.users.User;
@@ -13,11 +14,16 @@ import net.joelinn.asana.workspaces.Workspace;
 import net.joelinn.asana.workspaces.Workspaces;
 
 public class ApplicationContext {
+	private static boolean SHOW_ARCHIVED_PROJECTS = false;
+	
 	private StringResources stringResources = StringResources.getInstance();
 	private AsanaTerminal terminal;
 	private Workspaces availableWorkspaces;
 	private Workspace selectedWorkspaceObject;
+
+	private Projects availableProjectsInWorkspace;
 	private Project selectedProjectObject;
+	
 	private Users usersFromSelectedProject;
 	private Tasks tasksFromSelectedProject;
 	private Tasks userTasksFromSelectedProject;
@@ -62,7 +68,20 @@ public class ApplicationContext {
 	}
 	
 	public void setSelectedWorkspaceObject(int index){
-		selectedWorkspaceObject = availableWorkspaces.get(index);
+		this.selectedWorkspaceObject = availableWorkspaces.get(index);
+		setAvailableProjectsInWorkspace(getWorkspaceProjects(selectedWorkspaceObject.id, SHOW_ARCHIVED_PROJECTS));
+	}
+	
+	public void setSelectedProjectObject(int index) {
+		this.selectedProjectObject = availableProjectsInWorkspace.get(index);
+	}
+
+	private Projects getWorkspaceProjects(long workspaceId, boolean archived){
+		return terminal.projects().getProjects(workspaceId, archived);
+	}
+	
+	private void setAvailableProjectsInWorkspace(Projects projects){
+		this.availableProjectsInWorkspace = projects;
 	}
 
 	public Project getSelectedProjectObject() {
@@ -91,5 +110,9 @@ public class ApplicationContext {
 
 	public User getCurrentUser() {
 		return currentUser;
-	};
+	}
+
+	public Projects getAvailableProjectsInWorkspace() {
+		return availableProjectsInWorkspace;
+	}
 }

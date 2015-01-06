@@ -38,7 +38,7 @@ public class AsanaConnector extends ViewPart {
 		projectsPanel = new ProjectsUI(mainViewPanel, SWT.NONE);
 		viewManager = new ViewManager(loginPanel, workspacesPanel, projectsPanel);
 		
-		//Set view
+		//Set current perspective
 		viewManager.setView(AbstractView.BEFORE_LOGIN);
 
 		loginPanel.getLoginButton().addListener(SWT.Selection, new Listener() {
@@ -47,25 +47,9 @@ public class AsanaConnector extends ViewPart {
 				case SWT.Selection:
 					try {
 						appContext.initAsana(loginPanel.getKeyTextField().getText(), loginPanel.getEmailTextField().getText());
-						viewManager.setView(AbstractView.AFTER_LOGIN);
 						workspacesPanel.feedWorkspacesCombo(appContext.getAvailableWorkspaces());
 						loginPanel.setLoginSuccessMessage(appContext.getCurrentUser().name);
-						
-						
-						
-						//Dodaj przycisk "przegl¹daj taski", który ukryje ca³y widok dotychczasowy i odkryje widok listy tasków;
-						
-						//Dodaj akcjê wyboru szczegó³ów taska, która ukryje to co by³o do tej pory w widoku i poka¿e formatkê szczegó³ów taska
-						
-						//
-						
-						/*System.out.println("Your email: "
-								+ asana.users().getMe().email + ", your Name: "
-								+ asana.users().getMe().name);
-						loginResult.setText("Your email: "
-								+ asana.users().getMe().email + ", your Name: "
-								+ asana.users().getMe().name); //jak zakomentowaÄ‡ powyÅ¼sze, to wyÅ›wietli, dlaczego, to ja nie wiem =)*/
-						
+						viewManager.setView(AbstractView.AFTER_LOGIN);
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -74,7 +58,49 @@ public class AsanaConnector extends ViewPart {
 				}
 			}
 		});
-
+		
+		workspacesPanel.getWorkspacesCombo().addListener(SWT.DefaultSelection, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				switch (e.type) {
+				case SWT.Selection:
+					try {
+						appContext.setSelectedWorkspaceObject(workspacesPanel.getWorkspacesCombo().getSelectionIndex());
+						projectsPanel.feedProjectsCombo(appContext.getAvailableProjectsInWorkspace());
+						viewManager.setView(AbstractView.WORKSPACE_PROJECT_SELECTION);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					break;
+				}
+			} 
+		});
+		
+		projectsPanel.getProjectsCombo().addListener(SWT.DefaultSelection, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				switch (e.type) {
+				case SWT.Selection:
+					try {
+						appContext.setSelectedWorkspaceObject(workspacesPanel.getWorkspacesCombo().getSelectionIndex());
+						
+						//
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					break;
+				}
+			}
+		});
+		
+		//Dodaj przycisk "przegl¹daj taski", który ukryje ca³y widok dotychczasowy i odkryje widok listy tasków;
+		
+		//Dodaj akcjê wyboru szczegó³ów taska, która ukryje to co by³o do tej pory w widoku i poka¿e formatkê szczegó³ów taska
+		
+		
+		
 	}
 
 	public void setFocus() {
