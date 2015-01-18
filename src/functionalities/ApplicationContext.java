@@ -5,6 +5,7 @@ import java.util.List;
 import resources.StringResources;
 import models.TaskTreeNode;
 import net.joelinn.asana.projects.Project;
+import net.joelinn.asana.projects.ProjectRequestBuilder;
 import net.joelinn.asana.projects.Projects;
 import net.joelinn.asana.tasks.Task;
 import net.joelinn.asana.tasks.Tasks;
@@ -114,5 +115,9 @@ public class ApplicationContext {
 
 	public Projects getAvailableProjectsInWorkspace() {
 		return availableProjectsInWorkspace;
+	}
+	
+	public void createProject(Workspace workspace, String name){
+		this.terminal.projects().createProject(new ProjectRequestBuilder(workspace.id, name));
 	}
 }
