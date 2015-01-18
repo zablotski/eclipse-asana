@@ -19,7 +19,7 @@ public class TaskTreeNode {
 		this.subTasks = new ArrayList<TaskTreeNode>(subTrees);
 	}
 	
-	public List<TaskTreeNode> tasksListToForest(Tasks tasks){
+	public static List<TaskTreeNode> tasksListToForest(Tasks tasks){
 		List<TaskTreeNode> forest = new ArrayList<>();
 		List<TaskTreeNode> list = new ArrayList<>();
 		
@@ -34,7 +34,7 @@ public class TaskTreeNode {
 		return tasksListToForest(forest, list);
 	}
 	
-	private List<TaskTreeNode> tasksListToForest(List<TaskTreeNode> forest, List<TaskTreeNode> list){
+	private static List<TaskTreeNode> tasksListToForest(List<TaskTreeNode> forest, List<TaskTreeNode> list){
 		List<TaskTreeNode> subTasks = new ArrayList<>();
 		
 		if(list.isEmpty()){

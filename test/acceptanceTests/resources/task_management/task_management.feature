@@ -4,33 +4,33 @@ Feature: Task management
 	I want to manage my tasks from eclipse IDE
 	
 	Scenario Outline: View Tasks
-		Given user is logged in as <email>
+		Given user is logged in as_ <email>
 		And user picked <workspaceName> as workspace
-		And user picked <project> as project
-		When user clicks manage tasks
-		Then list contains <tasks>
+		When user pick <project> as project
+		Then task list contains <tasks>
 		
 	Examples:
-    |  email                     |  workspaceName                |  projectsList   |
-    |  "j-kwasnicki@wp.pl"       |  "PWR"                        |  ["Project 1"]  |
-    |  "j-kwasnicki@wp.pl"       |  "PWR2"                       |  ["Project2"]   |
+    |  email                     |  workspaceName                |  project      |  tasks                              |
+    |  "j-kwasnicki@wp.pl"       |  "PWR"                        |  "Project 1"  | "Sample task,esf,ss,Nowy task,Test" |
+    |  "j-kwasnicki@wp.pl"       |  "PWR2"                       |  "Project2"   | ""                                  |
 	
 	Scenario Outline: Open task
-		Given user is logged in as <email>
+		Given user is logged in as_ <email>
 		And user picked <workspaceName> as workspace
 		And user picked <project> as project
 		When user pick <taskName> from tasks list
 		Then chosen task is <taskName>
-		
-	|  email                     |  workspaceName  |  projectName  |
-    |  "j-kwasnicki@wp.pl"       |  "PWR"          |  "Project 1"  |
+	
+	Examples:	
+	|  email                     |  workspaceName  |  project      |  taskName  |
+    |  "j-kwasnicki@wp.pl"       |  "PWR"          |  "Project 1"  |  "esf"     |
 	
 	Scenario Outline: Create task
-		Given user is logged in as <email>
+		Given user is logged in as_ <email>
 		And user picked <workspaceName> as workspace
 		And user picked <project> as project
-		When user enters task name <taskName>
-		And user set section on <section>
+		When user set section on <section>
+		And user enters task name <taskName>
 		And user chose assignee <taskAssignee> from project members list
 		And user chose assigneeStatus <assigneeStatus> from assignee statuses list
 		And user chose completeness status <completeTask> from completeness radio buttons
@@ -40,33 +40,36 @@ Feature: Task management
 		And afterwards user clicks createTask button
 		Then task is <createdStatus>
 		
+	Examples:
 	| email               | workspaceName | project     | section         | taskName          | taskAssignee        | assigneeStatus | completeTask | dueDate | heartMark | taskNotes                                                  | createdStatus |
 	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | ""              | "Napisac feature" | "Michal G"          | "Inbox"        | false        | ""      | false     | "Opis"                                                     | "created"     |
 	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | ""              | "Pusty task"      | "Yauheni Zablotski" | ""             | false        | ""      | false     | ""                                                         | "created"     |
 	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | "Section ToDo:" | "Pusty task"      | ""                  | ""             | false        | ""      | false     | "task o tej nazwie istnieje, a mimo tego nie ma konfliktu" | "created"     |
 	
 	Scenario Outline: Update task
-		Given user is logged in as <email>
+		Given user is logged in as_ <email>
 		And user picked <workspaceName> as workspace
 		And user picked <project> as project
-		And user picked id: <taskId> as current task
-		And <taskId> task name is <taskName_PreEdit>
+		And user picked <taskId> from tasks list
+		And task key is <taskName_PreEdit> <taskId>
 		When user enters task name <taskName_PostEdit>
-		And afterwards user clicks updateTask button
+		And user clicks updateTask button
 		Then task is <updatedStatus>
 		
+	Examples:
 	| email               | workspaceName | project     | taskId         | taskName_PreEdit          | taskName_PostEdit        | updatedStatus |
-	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | 19191138125432 | "Section ToDo:"           | "ToDo:"                  | "updated"     |
-	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | 19191138125432 | "ToDo:"                   | "Section ToDo:"          | "updated"     |
+	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | 19191138125432 | "Napisac feature"         | "Sformulowac feature"    | "updated"     |
+	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | 19191138125432 | "Sformulowac feature"     | "Napisac feature"        | "updated"     |
 	
 	Scenario Outline: Delete task
-		Given user is logged in as <email>
+		Given user is logged in as_ <email>
 		And user picked <workspaceName> as workspace
 		And user picked <project> as project
-		And user picked task: <taskName> as current task
+		And user have picked <taskName> from tasks list
 		When user clicks deleteTask button
-		Then <taskName> task is <deletedStatus>
+		Then <taskName> named task is <deletedStatus>
 		
+	Examples:
 	| email               | workspaceName | project     | taskName          | deletedStatus |
 	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | "Napisac feature" | "deleted"     |
 	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | "Pusty task"      | "deleted"     |

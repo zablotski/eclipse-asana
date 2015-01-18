@@ -19,5 +19,13 @@ public class AsanaTerminal extends Asana{
 			throw new ApiException(ClientResponse.Status.UNAUTHORIZED, loginErrorMessage);
 		}
 	}
+	
+	public ProjectsClientParametrizable projects(){
+		return getClient(ProjectsClientParametrizable.class);
+	}
+	
+	public TasksClientParametrizable tasks(){
+		return getClient(TasksClientParametrizable.class);
+	}
 
 }

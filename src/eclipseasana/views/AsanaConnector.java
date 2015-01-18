@@ -83,7 +83,7 @@ public class AsanaConnector extends ViewPart {
 				switch (e.type) {
 				case SWT.Selection:
 					try {
-						appContext.setSelectedWorkspaceObject(workspacesPanel.getWorkspacesCombo().getSelectionIndex());
+						appContext.setSelectedProjectObject(projectsPanel.getProjectsCombo().getSelectionIndex());
 						
 						//
 					} catch (Exception e1) {
