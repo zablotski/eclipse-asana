@@ -57,16 +57,14 @@ public class ProjectCreateStepDefs {
 
 	@Then("^list of projects contains \"(.*?)\"$")
 	public void list_of_projects_contains(String arg1) throws Throwable {
-		String availableProjectsNames = "";
-	    
-    	for(int i=0; i<workspaceProjects.size(); i++){
-    		availableProjectsNames += workspaceProjects.get(i).name + ",";
+		Projects projects = application.getAvailableProjectsInWorkspace();
+    	for(int i=0; i<projects.size(); i++){
+    		if(arg1.equals(projects.get(i).name)){
+    			return;
+    		}
 	    }
-    	availableProjectsNames = availableProjectsNames.substring(0, availableProjectsNames.length()-1);
-	    
-    	if(!availableProjectsNames.contains(arg1)){
-    		throw new Exception();
-    	}
+    	throw new Exception();
+    	
 	}
 	
 }

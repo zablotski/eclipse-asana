@@ -1,4 +1,4 @@
-Feature: Workspaces review
+Feature: Project create
 	In order to be able to create my own workspaces
 	As an AsanaUser
 	I want to create new workspace
