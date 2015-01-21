@@ -242,7 +242,7 @@ public class AsanaConnector extends ViewPart {
 							taskPanel.saveTask();
 							taskPanel.showTaskSuccesfullyAddedMessageBox();
 						} catch (Exception e1) {
-							e1.printStackTrace();
+							e1.getMessage();
 						}
 						break;
 				}
@@ -302,13 +302,6 @@ public class AsanaConnector extends ViewPart {
 			}
 		});
 	}		
-		//Dodaj przycisk "przegl¹daj taski", który ukryje ca³y widok dotychczasowy i odkryje widok listy tasków;
-		
-		
-		
-		//Dodaj akcjê wyboru szczegó³ów taska, która ukryje to co by³o do tej pory w widoku i poka¿e formatkê szczegó³ów taska
-		
-		
 
 	public void setFocus() {
 		loginPanel.getEmailTextField().setFocus();

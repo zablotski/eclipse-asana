@@ -60,7 +60,10 @@ public class ProjectsUI {
 	private boolean isMyTaskOnlyFilterChecked = false;
 	private long sectionFilter_SectionId = -1;
 	private ApplicationContext appContext;
-			
+		
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Init
+	
 	public ProjectsUI(Composite parent, int style, ApplicationContext ctx) {
 		this.appContext = ctx;
 		this.verticalPanel = new Composite(parent, style);
@@ -111,6 +114,9 @@ public class ProjectsUI {
 				informationMessageBox = new MessageBox(parent.getShell(), SWT.ICON_INFORMATION | SWT.OK );
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//UI visibility
+	
 	public void clear(){
 		tasksTree.removeAll();
 		myTasksOnlyCheckbox.setSelection(false);
@@ -125,6 +131,13 @@ public class ProjectsUI {
 	public void setViewEnableState(boolean b) {
 		projectsCombo.setEnabled(b);
 	}
+	
+	public void setProjectDetailsSectionVisibility(boolean visible){
+		this.taskGroup.setVisible(visible);
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Feeding UI controls with context data
 	
 	public void feedProjectsCombo(){
 		feedProjectsCombo(appContext.getAvailableProjectsInWorkspace());
@@ -218,6 +231,26 @@ public class ProjectsUI {
 		return current;
 	}
 
+	public boolean isMyTaskOnlyFilterChecked() {
+		return isMyTaskOnlyFilterChecked;
+	}
+
+	public void setMyTaskOnlyFilterChecked(boolean isMyTaskOnlyFilterChecked) {
+		this.isMyTaskOnlyFilterChecked = isMyTaskOnlyFilterChecked;
+	}
+	
+	public long getSectionFilter_SectionId() {
+		return sectionFilter_SectionId;
+	}
+
+	public void setSectionFilter_SectionId(long sectionFilter_SectionId) {
+		if(sectionFilter_SectionId > -1)
+			this.sectionFilter_SectionId = sectionFilter_SectionId;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Controls getters
+	
 	public Combo getProjectsCombo() {
 		return projectsCombo;
 	}
@@ -246,26 +279,8 @@ public class ProjectsUI {
 		return deleteTaskButton;
 	}
 
-	public boolean isMyTaskOnlyFilterChecked() {
-		return isMyTaskOnlyFilterChecked;
-	}
-
-	public void setMyTaskOnlyFilterChecked(boolean isMyTaskOnlyFilterChecked) {
-		this.isMyTaskOnlyFilterChecked = isMyTaskOnlyFilterChecked;
-	}
-
-	public long getSectionFilter_SectionId() {
-		return sectionFilter_SectionId;
-	}
-
-	public void setSectionFilter_SectionId(long sectionFilter_SectionId) {
-		if(sectionFilter_SectionId > -1)
-			this.sectionFilter_SectionId = sectionFilter_SectionId;
-	}
-	
-	public void setProjectDetailsSectionVisibility(boolean visible){
-		this.taskGroup.setVisible(visible);
-	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Modals
 	
 	public int showDeleteConfirmationMessageBox() {
 		deleteConfirmMessageBox.setText(stringResources.getDeleteConfirmationMessageBoxTitleText());
@@ -288,7 +303,9 @@ public class ProjectsUI {
 		return informationMessageBox.open();
 	}
 	
-	//Set task selected in Tree as currentTask
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//DAO operations
+
 	public void selectTask(){
 		TreeItem[] selectedItem = tasksTree.getSelection();
 		appContext.setSelectedTaskObjectById((long)(selectedItem[0].getData()));

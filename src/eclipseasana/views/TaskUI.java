@@ -1,31 +1,20 @@
 package eclipseasana.views;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-
 import net.joelinn.asana.tasks.Task;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DateTime;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-
 import resources.StringResources;
-import customControls.ValueBasedCombo;
 import eclipseasana.exceptions.SaveTaskException;
 import functionalities.ApplicationContext;
 
@@ -62,8 +51,9 @@ public class TaskUI {
 			private InputDialog newSubtaskNameInputDialog;
 		
 	private ApplicationContext appContext;
-	private boolean dueDateModified = false;
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Init
 			
 	public TaskUI(Composite parent, int style, ApplicationContext ctx) {
 		this.appContext = ctx;
@@ -150,6 +140,9 @@ public class TaskUI {
 					stringResources.getAddSubtaskInputDialogMessageText());
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//UI visibility
+	
 	public void clear(){
 		taskTitleTextBox.setText("");
 		assigneeCombo.removeAll();
@@ -158,12 +151,14 @@ public class TaskUI {
 		completedCheckbox.setSelection(false);
 		dueDateCalendar.setText("");
 		notesTextArea.setText("");
-		dueDateModified = false;
 	}
 
 	public void setViewVisibility(boolean value){
 		verticalPanel.setVisible(value);
 	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Feeding UI controls with context data
 	
 	public void setSelectedTaskData(){
 		Task t = appContext.getSelectedTaskObject();
@@ -228,10 +223,17 @@ public class TaskUI {
 	}
 
 	private void feedAssigneeCombo() {
-		// TODO Auto-generated method stub
-		
+		String[] items = new String[appContext.getUsersFromSelectedProject().size()+1];
+		for(int i=0; i<appContext.getUsersFromSelectedProject().size(); i++){
+			items[i] = appContext.getUsersFromSelectedProject().get(i).name;
+		}
+		items[appContext.getUsersFromSelectedProject().size()] = "-------";
+		assigneeCombo.setItems(items);
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Controls getters
+	
 	public Button getSaveTaskButton() {
 		return saveTaskButton;
 	}
@@ -244,6 +246,9 @@ public class TaskUI {
 		return addSubtaskButton;
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Modals
+
 	public int showErrorAddSubtaskToNewTaskInfoMessageBox() {
 		informationMessageBox.setText(stringResources.getErrorAddSubtaskToNewTaskInfoMessageBoxTitleText());
 		informationMessageBox.setMessage(stringResources.getErrorAddSubtaskToNewTaskInfoMessageBoxMessageText());
@@ -262,6 +267,118 @@ public class TaskUI {
 		return informationMessageBox.open();
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//DAO operations
+
+	public void saveTask() throws SaveTaskException{
+		try{
+			if(appContext.getSelectedTaskObject() == null){
+				
+				appContext.createTask(
+							getSelectedSectionID(), 
+							getTypedTaskName(),
+							getSelectedAssigneeID(), 
+							getSelectedAssigneeStatusString(), 
+							completedCheckbox.getSelection(), 
+							getSelectedDueDate(),
+							getTypedNotes()
+						);
+			} else {
+				
+				Long section_NEW = checkSectionModification()? getSelectedSectionID() : null;
+				String taskName_NEW = checkTaskNameModification()? getTypedTaskName() : null;
+				Long assignee_NEW = checkAssigneeModification()? getSelectedAssigneeID() : null;
+				String assigneeStatus_NEW = checkAssigneeStatusModification()? getSelectedAssigneeStatusString() : null;
+				Boolean isComplete_NEW = checkCompletedModification()? completedCheckbox.getSelection() : null;
+				String duedate_NEW = checkDueDateModification()? getSelectedDueDate() : null;
+				String notes_NEW = checkNotesModification()? getTypedNotes() : null;
+				
+				appContext.updateSelectedTask(
+							section_NEW, 
+							taskName_NEW, 
+							assignee_NEW, 
+							assigneeStatus_NEW, 
+							isComplete_NEW, 
+							duedate_NEW, 
+							notes_NEW
+						);
+			}
+		} catch (Exception e){
+			throw new SaveTaskException(e);
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Modifications validators (case: modyfying task)
+
+	private boolean checkSectionModification(){
+		//never null
+		Long oldSectionValue = appContext.getSectionWhichContainsTask(
+				(Long)(appContext.getSelectedTaskObject().id));
+		if(oldSectionValue == -1){
+			if(getSelectedSectionID() == null){
+				return false;
+			}
+			return true;
+		}else{
+			if(getSelectedSectionID() == null){
+				return false;
+			}else{
+				if(!getSelectedSectionID().equals(oldSectionValue)){
+					return true;
+				}
+				return false;
+			}
+		}
+	}
+
+	private boolean checkTaskNameModification(){
+		if(appContext.getSelectedTaskObject().name == null){
+			return getTypedTaskName() != null;
+		}else{
+			return !appContext.getSelectedTaskObject().name.equals(getTypedTaskName());
+		}
+	}
+
+	private boolean checkNotesModification(){
+		if(appContext.getSelectedTaskObject().notes == null){
+			return getTypedTaskName() != null;
+		}else{
+			return !appContext.getSelectedTaskObject().notes.equals(getTypedNotes());
+		}
+	}
+
+	private boolean checkAssigneeModification(){
+		if(appContext.getSelectedTaskObject().assignee == null){
+			return getSelectedAssigneeID() != null;
+		}else{
+			return !appContext.getSelectedTaskObject().assignee.equals(getSelectedAssigneeID());
+		}
+	}
+
+	private boolean checkAssigneeStatusModification(){
+		if(appContext.getSelectedTaskObject().assigneeStatus == null){
+			return getSelectedAssigneeStatusString() != null;
+		}else{
+			return !appContext.getSelectedTaskObject().assigneeStatus.equals(getSelectedAssigneeStatusString());
+		}
+	}
+
+	private boolean checkDueDateModification(){
+		if(appContext.getSelectedTaskObject().dueOn == null){
+			return getSelectedAssigneeStatusString() != null;
+		}else{
+			return !appContext.getSelectedTaskObject().assigneeStatus.equals(getSelectedAssigneeStatusString());
+		}
+	}
+
+	private boolean checkCompletedModification(){
+		return appContext.getSelectedTaskObject().completed != completedCheckbox.getSelection();
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Get constructor required information from UI controls
+
 	private Long getSelectedSectionID(){
 		Long result = null;
 		
@@ -271,6 +388,24 @@ public class TaskUI {
 			result = appContext.getSectionsFromSelectedProject().get(index).id;
 		}
 		
+		return result;
+	}
+	
+	private String getTypedTaskName(){
+		String result = "";
+		
+		if(taskTitleTextBox.getText() != null){
+			result = taskTitleTextBox.getText();
+		}
+		return result;
+	}
+	
+	private String getTypedNotes(){
+		String result = "";
+		
+		if(notesTextArea.getText() != null){
+			result = notesTextArea.getText();
+		}
 		return result;
 	}
 	
@@ -287,8 +422,6 @@ public class TaskUI {
 		return assigneeId;
 	}
 	
-	
-	
 	private String getSelectedAssigneeStatusString(){
 		String as_status = null;
 		
@@ -303,43 +436,20 @@ public class TaskUI {
 		}
 		return as_status;
 	}
-
-	public void saveTask() throws SaveTaskException{
-		try{
-			//Assignee read
-			
-			//Assignee status read
-			
-			
-			//Due date read YYYY-MM-DD
-			
-			
-
-			
-			if(appContext.getSelectedTaskObject() == null){
-				
-				appContext.createTask(
-							getSelectedSectionID(), 
-							taskTitleTextBox.getText(), 
-							assigneeId, 
-							as_status, 
-							completedCheckbox.getSelection(), 
-							temp1, 
-							notesTextArea.getText()
-						);
-			} else {
-				appContext.updateSelectedTask(
-							section_NEW, 
-							taskName_NEW, 
-							assignee_NEW, 
-							assigneeStatus_NEW, 
-							isComplete_NEW, 
-							duedate_NEW, 
-							notes_NEW
-						);
+	
+	private String getSelectedDueDate() {
+		String result = "";
+		
+		if(dueDateCalendar.getText() == null){
+			result = null;
+		}else{
+			if(dueDateCalendar.getText().equals("")){
+				result = null;
+			}else{
+				result = dueDateCalendar.getText();
 			}
-		} catch (Exception e){
-			throw new SaveTaskException(e);
 		}
+		
+		return result;
 	}
 }
