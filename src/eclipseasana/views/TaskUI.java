@@ -316,7 +316,7 @@ public class TaskUI {
 			
 
 			
-			if(appContext.getSelectedTaskObject() == null){
+/*			if(appContext.getSelectedTaskObject() == null){
 				
 				appContext.createTask(
 							getSelectedSectionID(), 
@@ -337,7 +337,7 @@ public class TaskUI {
 							duedate_NEW, 
 							notes_NEW
 						);
-			}
+			}*/
 		} catch (Exception e){
 			throw new SaveTaskException(e);
 		}

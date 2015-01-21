@@ -1,6 +1,7 @@
 package eclipseasana.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -36,36 +37,58 @@ public class LoginUI {
 		this.verticalPanelLayout.type = SWT.VERTICAL;
 		this.verticalPanel.setLayout(verticalPanelLayout);
 		
-		addControls(verticalPanel, style);
-		
 		logoutButton = new Button(verticalPanel, SWT.PUSH);
 		logoutButton.setText(stringResources.getLogoutButtonText());
 		logoutButton.setVisible(false);
+		
+		addControls(verticalPanel, style);		
+		
 		loginResult = new Label(verticalPanel, SWT.NONE);
 		loginButton = new Button(verticalPanel, SWT.PUSH);
 		loginButton.setText(stringResources.getLoginButtonText());
 	}
 	
 	private void addControls(Composite localParent, int style) {
+		
 		horizontalEmailPanel = new Composite(localParent, style);
 		horizontalEmailPanelLayout = new RowLayout();
 		horizontalEmailPanelLayout.type = SWT.HORIZONTAL;
 		horizontalEmailPanel.setLayout(horizontalEmailPanelLayout);
 		
-		loginEmailLabel = new Label(horizontalEmailPanel, SWT.NONE);
-		loginEmailLabel.setText(stringResources.getLoginEmailLabelText());
-		emailTextField = new Text(horizontalEmailPanel, SWT.BORDER);
-		//emailTextField.setText();
+		{
+			loginEmailLabel = new Label(horizontalEmailPanel, SWT.NONE);
+			RowData loginEmailLabelLData = new RowData();
+			loginEmailLabelLData.width = 70;
+			loginEmailLabel.setLayoutData(loginEmailLabelLData);
+			loginEmailLabel.setText("E-mail");
+		}
+		{
+			RowData emailTextFieldLData = new RowData();
+			emailTextFieldLData.width = 246;
+			emailTextFieldLData.height = 15;
+			emailTextField = new Text(horizontalEmailPanel, SWT.NONE);
+			emailTextField.setLayoutData(emailTextFieldLData);
+		}
 		
 		horizontalKeyPanel = new Composite(localParent, style);
 		horizontalKeyPanelLayout = new RowLayout();
 		horizontalKeyPanelLayout.type = SWT.HORIZONTAL;
 		horizontalKeyPanel.setLayout(horizontalKeyPanelLayout);
 		
-		loginKeyLabel = new Label(horizontalKeyPanel, SWT.NONE);
-		loginKeyLabel.setText(stringResources.getLoginKeyLabelText());
-		keyTextField = new Text(horizontalKeyPanel, SWT.BORDER);
-		//keyTextField.setText();
+		{
+			loginKeyLabel = new Label(horizontalKeyPanel, SWT.NONE);
+			RowData loginKeyLabelLData = new RowData();
+			loginKeyLabelLData.width = 70;
+			loginKeyLabel.setLayoutData(loginKeyLabelLData);
+			loginKeyLabel.setText("API Key");
+		}
+		{
+			RowData keyTextFieldLData = new RowData();
+			keyTextFieldLData.width = 246;
+			keyTextFieldLData.height = 15;
+			keyTextField = new Text(horizontalKeyPanel, SWT.NONE);
+			keyTextField.setLayoutData(keyTextFieldLData);
+		}
 	}
 
 	public void setViewVisibility(boolean value){
@@ -86,7 +109,7 @@ public class LoginUI {
 	}
 	
 	private void setViewState(boolean value){
-		//po wylogowaniu/zalogowaniu zmienia siê layout
+		//po wylogowaniu/zalogowaniu zmienia siï¿½ layout
 		horizontalEmailPanel.setVisible(value);
 		horizontalKeyPanel.setVisible(value);
 		loginButton.setVisible(value);
