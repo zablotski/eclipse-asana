@@ -35,16 +35,14 @@ Feature: Task management
 		And user chose assigneeStatus <assigneeStatus> from assignee statuses list
 		And user chose completeness status <completeTask> from completeness radio buttons
 		And user enters due date <dueDate>
-		And user chose heart-mark <heartMark> from heart-mark radio buttons
 		And user enters notes <taskNotes>
 		And afterwards user clicks createTask button
 		Then task is <createdStatus>
 		
 	Examples:
-	| email               | workspaceName | project     | section         | taskName          | taskAssignee        | assigneeStatus | completeTask | dueDate | heartMark | taskNotes                                                  | createdStatus |
-	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | ""              | "Napisac feature" | "Michal G"          | "Inbox"        | false        | ""      | false     | "Opis"                                                     | "created"     |
-	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | ""              | "Pusty task"      | "Yauheni Zablotski" | ""             | false        | ""      | false     | ""                                                         | "created"     |
-	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | "Section ToDo:" | "Pusty task"      | ""                  | ""             | false        | ""      | false     | "task o tej nazwie istnieje, a mimo tego nie ma konfliktu" | "created"     |
+	| email               | workspaceName | project     | section         | taskName          | taskAssignee        | assigneeStatus | completeTask | dueDate | taskNotes                                                  | createdStatus |
+	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | ""              | "Napisac feature" | "Michal G"          | "Inbox"        | false        | ""      | "Opis"                                                     | "created"     |
+	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | "Section ToDo:" | "Pusty task"      | "Yauheni Zablotski" | ""             | false        | ""      | ""                                                         | "created"     |
 	
 	Scenario Outline: Update task
 		Given user is logged in as_ <email>
@@ -57,9 +55,9 @@ Feature: Task management
 		Then task is <updatedStatus>
 		
 	Examples:
-	| email               | workspaceName | project     | taskId         | taskName_PreEdit          | taskName_PostEdit        | updatedStatus |
-	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | 19191138125432 | "Napisac feature"         | "Sformulowac feature"    | "updated"     |
-	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | 19191138125432 | "Sformulowac feature"     | "Napisac feature"        | "updated"     |
+	| email               | workspaceName | project     | taskId           | taskName_PreEdit          | taskName_PostEdit        | updatedStatus |
+	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | "24420228984192" | "Sample task"             | "Sformulowac feature"    | "updated"     |
+	| "j-kwasnicki@wp.pl" | "PWR"         | "Project 1" | "24420228984192" | "Sformulowac feature"     | "Sample task"            | "updated"     |
 	
 	Scenario Outline: Delete task
 		Given user is logged in as_ <email>

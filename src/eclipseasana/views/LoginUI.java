@@ -7,10 +7,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import functionalities.ApplicationContext;
 import resources.StringResources;
 
 public class LoginUI {
 	private StringResources stringResources = StringResources.getInstance();
+	private ApplicationContext appContext;
 	private Composite verticalPanel;
 	private Composite horizontalEmailPanel;
 	private Composite horizontalKeyPanel;
@@ -27,7 +29,8 @@ public class LoginUI {
 	private Button loginButton;
 	private Button logoutButton;
 	
-	public LoginUI(Composite parent, int style){
+	public LoginUI(Composite parent, int style, ApplicationContext appContext){
+		this.appContext = appContext;
 		this.verticalPanel = new Composite(parent, style);
 		this.verticalPanelLayout = new RowLayout();
 		this.verticalPanelLayout.type = SWT.VERTICAL;
@@ -35,7 +38,8 @@ public class LoginUI {
 		
 		addControls(verticalPanel, style);
 		
-		logoutButton = new Button(verticalPanel, SWT.NONE);
+		logoutButton = new Button(verticalPanel, SWT.PUSH);
+		logoutButton.setText(stringResources.getLogoutButtonText());
 		logoutButton.setVisible(false);
 		loginResult = new Label(verticalPanel, SWT.NONE);
 		loginButton = new Button(verticalPanel, SWT.PUSH);
@@ -66,6 +70,11 @@ public class LoginUI {
 
 	public void setViewVisibility(boolean value){
 		verticalPanel.setVisible(value);
+	}
+	
+	public void clear(){
+		emailTextField.setText("");
+		keyTextField.setText("");;
 	}
 	
 	public void setLoginState(){
@@ -141,5 +150,7 @@ public class LoginUI {
 		return loginButton;
 	}
 	
-	
+	public Button getLogoutButton() {
+		return logoutButton;
+	}
 }

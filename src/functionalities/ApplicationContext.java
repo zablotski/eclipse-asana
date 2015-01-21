@@ -1,10 +1,7 @@
 package functionalities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import resources.StringResources;
-import models.TaskTreeNode;
+import models.TaskEnhancedList;
 import net.joelinn.asana.projects.Project;
 import net.joelinn.asana.projects.Projects;
 import net.joelinn.asana.tasks.Task;
@@ -15,9 +12,26 @@ import net.joelinn.asana.users.Users;
 import net.joelinn.asana.workspaces.Workspace;
 import net.joelinn.asana.workspaces.Workspaces;
 
+
+
 public class ApplicationContext {
 	private static boolean SHOW_ARCHIVED_PROJECTS = false;
-	private static String[] ADDITIONAL_TASK_FIELD_NAMES_TO_TASK_LIST = new String[] {"parent", "assignee", "name"};
+	private static String[] ADDITIONAL_TASK_FIELD_NAMES_TO_TASK_LIST = new String[] 
+		{
+			"parent", 
+			"assignee", 
+			"name", 
+			"workspace", 
+			"projects"
+		};
+	private static String[] assigneeStatusesStrings = new String[]
+			{
+				TaskRequestBuilder.ASSIGNEE_STATUS_INBOX, 
+				TaskRequestBuilder.ASSIGNEE_STATUS_LATER, 
+				TaskRequestBuilder.ASSIGNEE_STATUS_TODAY, 
+				TaskRequestBuilder.ASSIGNEE_STATUS_UPCOMING,
+				"-------"
+			};
 	
 	private StringResources stringResources = StringResources.getInstance();
 	private AsanaTerminal terminal;
@@ -28,11 +42,7 @@ public class ApplicationContext {
 	private Project selectedProjectObject;
 	
 	private Users usersFromSelectedProject;
-	private Tasks tasksFromSelectedProject;
-	private Tasks userTasksFromSelectedProject;
-	private Tasks userTasksFromSelectedProject_NoSubtasks;
-	private Tasks sectionsFromSelectedProject;
-	private List<TaskTreeNode> tasksTree;
+	private TaskEnhancedList tasksFromSelectedProject;
 	
 	private Task selectedTaskObject;
 	
@@ -56,30 +66,23 @@ public class ApplicationContext {
 		availableWorkspaces = terminal.workspaces().getWorkspaces();
 	}
 	
-	//private
-	
-	private void calculateTasksAndSections(Tasks input){
-		Tasks userTasks = new Tasks();
-		Tasks userTasks_NoSubtasks = new Tasks();
-		Tasks sections = new Tasks();
+	public void logOutAsana(){
+		terminal = null;
+		availableWorkspaces = null;
+		selectedWorkspaceObject = null;
+		availableProjectsInWorkspace = null;
+		selectedProjectObject = null;
+		usersFromSelectedProject = null;
+		tasksFromSelectedProject = null;
+		selectedTaskObject = null;
+		currentUser = null;
 		
-		for(Task t : input){
-			if(t.name.endsWith(stringResources.getSectionConventionSuffix())){
-				sections.add(t);
-			}else{
-				userTasks.add(t);
-				if(t.parent == null){
-					userTasks_NoSubtasks.add(t);
-				}
-			}
-		}
-		
-		userTasksFromSelectedProject_NoSubtasks = userTasks_NoSubtasks;
-		userTasksFromSelectedProject = userTasks;
-		sectionsFromSelectedProject = sections;
+		System.gc();
 	}
 	
-	private Tasks getTasksWithSubtasks(Tasks results, Tasks lastAdded){
+	//private
+		
+	private Tasks downloadTasksWithSubtasks(Tasks results, Tasks lastAdded){
 		Tasks temp = new Tasks();
 		Tasks temp2 = new Tasks();
 		temp2.addAll(results);
@@ -92,31 +95,33 @@ public class ApplicationContext {
 			return results;
 		}else{
 			temp2.addAll(temp);
-			return getTasksWithSubtasks(temp2, temp);
+			return downloadTasksWithSubtasks(temp2, temp);
 		}
 	}
 	
-	private void setTasksFromSelectedProject() {
+	private void downloadTasksFromSelectedProject() {
 		//Pobiera tylko g³ówne taski
 		Tasks listOfTasks = terminal.projects().getTasks(selectedProjectObject.id, 
 				ADDITIONAL_TASK_FIELD_NAMES_TO_TASK_LIST);
 		
 		//Pobiera wszystkie taski
-		listOfTasks = getTasksWithSubtasks(listOfTasks, listOfTasks);
-		tasksFromSelectedProject = listOfTasks;
-		calculateTasksAndSections(listOfTasks);
-		//tasksTree = TaskTreeNode.tasksListToForest(tasksFromSelectedProject);
+		listOfTasks = downloadTasksWithSubtasks(listOfTasks, listOfTasks);
+		tasksFromSelectedProject = new TaskEnhancedList(listOfTasks);
 	}
 	
-	private void setUsersFromSelectedProject() {
+	private void downloadUsersFromSelectedProject() {
 		usersFromSelectedProject = terminal.projects().getProject(selectedProjectObject.id).members;
+	}
+	
+	private Task downloadFullTaskObject(long id){
+		return terminal.tasks().getTask(id);
 	}
 	
 	private void setAvailableProjectsInWorkspace(Projects projects){
 		this.availableProjectsInWorkspace = projects;
 	}
 	
-	private Projects getWorkspaceProjects(long workspaceId, boolean archived){
+	private Projects downloadWorkspaceProjects(long workspaceId, boolean archived){
 		return terminal.projects().getProjects(workspaceId, archived);
 	}
 	
@@ -135,13 +140,13 @@ public class ApplicationContext {
 	
 	public void setSelectedWorkspaceObject(int index){
 		this.selectedWorkspaceObject = availableWorkspaces.get(index);
-		setAvailableProjectsInWorkspace(getWorkspaceProjects(selectedWorkspaceObject.id, SHOW_ARCHIVED_PROJECTS));
+		setAvailableProjectsInWorkspace(downloadWorkspaceProjects(selectedWorkspaceObject.id, SHOW_ARCHIVED_PROJECTS));
 	}
 	
 	public void setSelectedProjectObject(int index) {
 		this.selectedProjectObject = availableProjectsInWorkspace.get(index);
-		setTasksFromSelectedProject();
-		setUsersFromSelectedProject();
+		downloadTasksFromSelectedProject();
+		downloadUsersFromSelectedProject();
 	}
 
 	public Project getSelectedProjectObject() {
@@ -153,23 +158,23 @@ public class ApplicationContext {
 	}
 
 	public Tasks getTasksFromSelectedProject() {
-		return tasksFromSelectedProject;
+		return tasksFromSelectedProject.getAllTasks();
 	}
 
 	public Tasks getUserTasksFromSelectedProject() {
-		return userTasksFromSelectedProject;
+		return tasksFromSelectedProject.getUserTasks();
 	}
 	
 	public Tasks getUserTasksFromSelectedProject_NoSubtasks() {
-		return userTasksFromSelectedProject_NoSubtasks;
+		return tasksFromSelectedProject.getUserTasks_NoSubtasks();
 	}
 
 	public Tasks getSectionsFromSelectedProject() {
-		return sectionsFromSelectedProject;
+		return tasksFromSelectedProject.getSections();
 	}
-
-	public List<TaskTreeNode> getTasksTree() {
-		return tasksTree;
+	
+	public long getSectionWhichContainsTask(long taskId){
+		return tasksFromSelectedProject.getTaskSection(taskId);
 	}
 
 	public User getCurrentUser() {
@@ -179,99 +184,113 @@ public class ApplicationContext {
 	public Projects getAvailableProjectsInWorkspace() {
 		return availableProjectsInWorkspace;
 	}
+	
+	public void setCurrentTaskUnselected(){
+		this.selectedTaskObject = null;
+	}
 
 	public void setSelectedTaskObject(int i) {
-		this.selectedTaskObject = tasksFromSelectedProject.get(i);
+		this.selectedTaskObject = downloadFullTaskObject(tasksFromSelectedProject.get(i).id);
+	}
+	
+	public void setSelectedTaskObjectById(long id) {
+		int index=-1;
+		
+		for(int i=0; i<tasksFromSelectedProject.size(); i++){
+			if(tasksFromSelectedProject.get(i).id == id){
+				index = i;
+				break;
+			}
+		}
+		
+		if(index > -1)
+			this.selectedTaskObject = downloadFullTaskObject(tasksFromSelectedProject.get(index).id);
 	}
 
 	public Task getSelectedTaskObject() {
 		return this.selectedTaskObject;
 	}
 
-	public void createTask(long section_NEW, String taskName_NEW,
-			long assignee_NEW, String assigneeStatus_NEW,
-			boolean isComplete_NEW, String duedate_NEW,
-			boolean isHeartMarked_NEW, String notes_NEW) {
-		long[] parentProject = new long[] {selectedProjectObject.id};
+	public void createTask(Long section_NEW, String taskName_NEW,
+			Long assignee_NEW, String assigneeStatus_NEW,
+			Boolean isComplete_NEW, String duedate_NEW,
+			String notes_NEW) {
+		Tasks sectionsFromSelectedProject = tasksFromSelectedProject.getSections();
 		
-		TaskRequestBuilder builder = new TaskRequestBuilder();
+		long parentProject = selectedProjectObject.id;
 		
-		if(section_NEW != -1){
+		TaskRequestBuilderFixed builder = new TaskRequestBuilderFixed();
+		
+		if(section_NEW != null){
 			builder.parent(section_NEW);
 			Task selectedSection;
 			
-			for(int i=0; i<this.sectionsFromSelectedProject.size(); i++ ){
-				if(this.sectionsFromSelectedProject.get(i).id == section_NEW){
-					selectedSection = this.sectionsFromSelectedProject.get(i);
+			for(int i=0; i<sectionsFromSelectedProject.size(); i++ ){
+				if(sectionsFromSelectedProject.get(i).id == section_NEW){
+					selectedSection = sectionsFromSelectedProject.get(i);
 					builder.workspace(selectedSection.workspace.id);
 					
 					//Where is LINQ :<
-					long[] selectedSectionParentProject = new long[selectedSection.projects.size()];
 					for(int j=0; j<selectedSection.projects.size(); j++){
-						selectedSectionParentProject[j] = selectedSection.projects.get(j).id;
+						builder.addProject(selectedSection.projects.get(j).id);
 					}
-					
-					if(selectedSectionParentProject.length > 0)
-						builder.setProjects(selectedSectionParentProject);
 				}
 			}
 		}else{
 			builder.workspace(selectedWorkspaceObject.id);
-			//builder.setProjects(parentProject);
-			builder.setParam("Projects", "\"id\": 24420228984188, \"name\": \"Project 1\"");
+			builder.addProject(parentProject);
 		}
 		
-		if(assignee_NEW != -1)
+		if(assignee_NEW != null)
 			builder.assignee(assignee_NEW);
 		
-		if(!assigneeStatus_NEW.equals(""))
+		if(assigneeStatus_NEW != null)
 			builder.assigneeStatus(assigneeStatus_NEW);
 		
-		if(!duedate_NEW.equals(""))
+		if(duedate_NEW != null)
 			builder.dueOn(duedate_NEW);
 		
 		
 		builder.name(taskName_NEW);
 		builder.completed(isComplete_NEW);
-		builder.notes(notes_NEW);
+		
+		if(notes_NEW != null)
+			builder.notes(notes_NEW);
+		
 		builder.build();
 		
 		terminal.tasks().createTask(builder);
+		
+		//update offline tasks list
+		downloadTasksFromSelectedProject();
 	}
 
-	public void updateSelectedTask(long section_NEW, String taskName_NEW,
-			long assignee_NEW, String assigneeStatus_NEW,
-			boolean isComplete_NEW, boolean completeSpecified, String duedate_NEW,
-			boolean isHeartMarked_NEW, boolean heartSpecified, String notes_NEW) {
-		long[] parentProject = new long[] {selectedProjectObject.id};
+	public void updateSelectedTask(Long section_NEW, String taskName_NEW,
+			Long assignee_NEW, String assigneeStatus_NEW,
+			Boolean isComplete_NEW, String duedate_NEW, 
+			String notes_NEW) {
+		Tasks sectionsFromSelectedProject = tasksFromSelectedProject.getSections();
 		
-		TaskRequestBuilder builder = new TaskRequestBuilder();
+		TaskRequestBuilderFixed builder = new TaskRequestBuilderFixed();
 		
-		if(section_NEW != -1){
+		if(section_NEW != null){
 			builder.parent(section_NEW);
 			Task selectedSection;
 			
-			for(int i=0; i<this.sectionsFromSelectedProject.size(); i++ ){
-				if(this.sectionsFromSelectedProject.get(i).id == section_NEW){
-					selectedSection = this.sectionsFromSelectedProject.get(i);
+			for(int i=0; i<sectionsFromSelectedProject.size(); i++ ){
+				if(sectionsFromSelectedProject.get(i).id == section_NEW){
+					selectedSection = sectionsFromSelectedProject.get(i);
 					builder.workspace(selectedSection.workspace.id);
 					
 					//Where is LINQ :<
-					long[] selectedSectionParentProject = new long[selectedSection.projects.size()];
 					for(int j=0; j<selectedSection.projects.size(); j++){
-						selectedSectionParentProject[j] = selectedSection.projects.get(j).id;
+						builder.addProject(selectedSection.projects.get(j).id);
 					}
-					
-					if(selectedSectionParentProject.length > 0)
-						builder.setProjects(selectedSectionParentProject);
 				}
 			}
-		}else{
-			builder.workspace(selectedWorkspaceObject.id);
-			builder.setProjects(parentProject);
 		}
 			
-		if(assignee_NEW != -1)
+		if(assignee_NEW != null)
 			builder.assignee(assignee_NEW);
 		
 		if(assigneeStatus_NEW != null)
@@ -283,18 +302,33 @@ public class ApplicationContext {
 		if(taskName_NEW != null)
 			builder.name(taskName_NEW);
 		
-		if(completeSpecified)
+		if(isComplete_NEW != null)
 			builder.completed(isComplete_NEW);
 		
 		if(notes_NEW != null)
 			builder.notes(notes_NEW);
 
 		builder.build();
+		
 		terminal.tasks().updateTask(selectedTaskObject.id, builder);
+		
+		//update offline tasks list
+		downloadTasksFromSelectedProject();
 	}
 
 	public void deleteCurrentTask() {
-		// TODO Auto-generated method stub
+		terminal.tasks().deleteTask(selectedTaskObject.id);
 		
+		//update offline tasks list
+		downloadTasksFromSelectedProject();
+		
+		//remove association to selected task
+		selectedTaskObject = null;
+	}
+
+
+
+	public String[] getAssigneeStatusesStrings() {
+		return assigneeStatusesStrings;
 	}
 }

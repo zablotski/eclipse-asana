@@ -19,13 +19,12 @@ import functionalities.ApplicationContext;
 public class TaskManagementStepDefs {
 	
 	//For creating task scenario test;
-	private long section_NEW;
+	private Long section_NEW;
 	private String taskName_NEW;
-	private long assignee_NEW;
+	private Long assignee_NEW;
 	private String assigneeStatus_NEW;
-	private boolean isComplete_NEW;
+	private Boolean isComplete_NEW;
 	private String duedate_NEW;
-	private boolean isHeartMarked_NEW;
 	private String notes_NEW;
 	//********************************
 	
@@ -136,9 +135,11 @@ public class TaskManagementStepDefs {
 		long selectedSection = -1;
 		
 		if(arg1.equals("")){
-			section_NEW = -1;
+			section_NEW = null;
 			return;
 		}
+		
+		
 		
 	    for(int i=0; i<application.getSectionsFromSelectedProject().size(); i++){
 	    	if(application.getSectionsFromSelectedProject().get(i).name.equals(arg1)){
@@ -163,7 +164,7 @@ public class TaskManagementStepDefs {
 		long selectedUser = -1;
 		
 		if(arg1.equals("")){
-			assignee_NEW = -1;
+			assignee_NEW = null;
 			return;
 		}
 		
@@ -195,6 +196,8 @@ public class TaskManagementStepDefs {
 			case "Upcoming":
 				assigneeStatus_NEW = TaskRequestBuilder.ASSIGNEE_STATUS_UPCOMING;
 				break;
+			default:
+				assigneeStatus_NEW = null;
 		}
 	    
 	}
@@ -206,17 +209,20 @@ public class TaskManagementStepDefs {
 
 	@When("^user enters due date \"(.*?)\"$")
 	public void user_enters_due_date(String arg1) throws Throwable {
-	    duedate_NEW = arg1;
-	}
-
-	@When("^user chose heart-mark false from heart-mark radio buttons$")
-	public void user_chose_heart_mark_false_from_heart_mark_radio_buttons() throws Throwable {
-	    isHeartMarked_NEW = false;
+		if(arg1.length() > 0){
+			duedate_NEW = arg1;
+		}else{
+			duedate_NEW = null;
+		}
 	}
 
 	@When("^user enters notes \"(.*?)\"$")
 	public void user_enters_notes(String arg1) throws Throwable {
-	    notes_NEW = arg1;
+		if(arg1.length() > 0){
+			notes_NEW = arg1;
+		}else{
+			notes_NEW = null;
+		}
 	}
 
 	@When("^afterwards user clicks createTask button$")
@@ -227,7 +233,6 @@ public class TaskManagementStepDefs {
 	    		assigneeStatus_NEW,
 	    		isComplete_NEW,
 	    		duedate_NEW,
-	    		isHeartMarked_NEW,
 	    		notes_NEW);
 	}
 
@@ -238,12 +243,12 @@ public class TaskManagementStepDefs {
 	    }
 	}
 
-	@Given("^user picked (\\d+) from tasks list$")
-	public void user_picked_from_tasks_list(int arg1) throws Throwable {
+	@Given("^user picked \"(.*?)\" from tasks list$")
+	public void user_picked_from_tasks_list(String arg1) throws Throwable {
 		Tasks availableTasks = application.getTasksFromSelectedProject();
 	    
 	    for(int i=0; i<availableTasks.size(); i++){
-	    	if(availableTasks.get(i).name.equals(arg1)){
+	    	if(availableTasks.get(i).id == Long.parseLong(arg1)){
 	    		application.setSelectedTaskObject(i);
 	    		setTask = application.getSelectedTaskObject();
 	    		break;
@@ -255,9 +260,9 @@ public class TaskManagementStepDefs {
 	    }
 	}
 
-	@Given("^task key is \"(.*?)\" (\\d+)$")
-	public void task_key_is(String arg1, int arg2) throws Throwable {
-	    if(!(setTask.name.equals(arg1) && setTask.id == arg2)){
+	@Given("^task key is \"(.*?)\" \"(.*?)\"$")
+	public void task_key_is(String arg1, String arg2) throws Throwable {
+	    if(!(setTask.name.equals(arg1) && setTask.id == Long.parseLong(arg2))){
 	    	throw new Exception();
 	    }
 	}
@@ -266,15 +271,13 @@ public class TaskManagementStepDefs {
 	public void user_clicks_updateTask_button() throws Throwable {
 			
 		
-	    application.updateSelectedTask(-1,
+	    application.updateSelectedTask(
+	    		null,
 	    		taskName_NEW,
-	    		-1,
 	    		null,
-	    		false,
-	    		false,
 	    		null,
-	    		false,
-	    		false,
+	    		null,
+	    		null,
 	    		null);
 	}
 
