@@ -14,6 +14,7 @@ import net.joelinn.asana.users.User;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -74,7 +75,15 @@ public class ProjectsUI {
 	private void addControls(Composite parent, int style) {
 		projectsComboLabel = new Label(parent, style);
 		projectsComboLabel.setText(stringResources.getProjectsComboText());
-		projectsCombo = new Combo(parent, SWT.BORDER);
+		
+		{
+			projectsCombo = new Combo(parent, SWT.NONE);
+			RowData projectsComboLData = new RowData();
+			projectsComboLData.width = 210;
+			projectsComboLData.height = 27;
+			projectsCombo.setLayoutData(projectsComboLData);
+			projectsCombo.setText("Select Project");
+		}
 		
 		taskGroup = new Group(parent, style);
 		taskGroupLayout = new RowLayout();

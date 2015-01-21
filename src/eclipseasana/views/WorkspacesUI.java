@@ -3,6 +3,9 @@ package eclipseasana.views;
 import net.joelinn.asana.workspaces.Workspaces;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -30,9 +33,23 @@ public class WorkspacesUI {
 	}
 
 	private void addControls(Composite parent, int style) {
-		workspacesComboLabel = new Label(parent, style);
-		workspacesComboLabel.setText(stringResources.getWorkspacesComboText());
-		workspacesCombo = new Combo(parent, SWT.BORDER);
+		{
+			workspacesComboLabel = new Label(parent, SWT.NONE);
+			RowData workspacesComboLabelLData = new RowData();
+			workspacesComboLabelLData.width = 210;
+			workspacesComboLabelLData.height = 15;
+			workspacesComboLabel.setLayoutData(workspacesComboLabelLData);
+			workspacesComboLabel.setText("Select Workspace");
+		}
+	
+		{
+			workspacesCombo = new Combo(parent, SWT.NONE);
+			RowData workspacesComboLData = new RowData();
+			workspacesComboLData.width = 211;
+			workspacesComboLData.height = 27;
+			workspacesCombo.setLayoutData(workspacesComboLData);
+			workspacesCombo.setText("Select Workspace");
+		}
 	}
 	
 	public void feedWorkspacesCombo(){
