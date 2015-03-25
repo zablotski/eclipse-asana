@@ -1,3 +1,3 @@
 eclipse-asana
 =============
-project
+asana connector to eclipse
