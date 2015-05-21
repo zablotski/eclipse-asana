@@ -51,17 +51,16 @@ public class ProjectsReviewStepDefs {
 
 	@Then("^projects list contains \"(.*?)\"$")
 	public void projects_list_contains(String arg1) throws Throwable {
-		String availableProjectsNames = "";
-	    
-
+		String projectNamesAsString = "";
+		
     	for(int i=0; i<workspaceProjects.size(); i++){
-    		availableProjectsNames += workspaceProjects.get(i).name + ",";
+    		projectNamesAsString += workspaceProjects.get(i).name + ",";
 	    }
-    	availableProjectsNames = availableProjectsNames.substring(0, availableProjectsNames.length()-1);
-	    
-    	if(!availableProjectsNames.equals(arg1)){
+    	
+    	projectNamesAsString = projectNamesAsString.substring(0, projectNamesAsString.length()-1);
+
+    	if(!arg1.equals(projectNamesAsString))
     		throw new Exception();
-    	}
 	}
 
 	@Given("^user choose workspace \"(.*?)\"$")

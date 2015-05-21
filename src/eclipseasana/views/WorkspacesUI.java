@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import functionalities.ApplicationContext;
 import resources.StringResources;
 
 public class WorkspacesUI {
@@ -16,8 +17,10 @@ public class WorkspacesUI {
 	private Label workspacesComboLabel;
 	private Combo workspacesCombo;
 	private RowLayout verticalPanelLayout;
+	private ApplicationContext appContext;
 
-	public WorkspacesUI(Composite parent, int style) {
+	public WorkspacesUI(Composite parent, int style, ApplicationContext appContext) {
+		this.appContext = appContext;
 		this.verticalPanel = new Composite(parent, style);
 		this.verticalPanelLayout = new RowLayout();
 		this.verticalPanelLayout.type = SWT.VERTICAL;
@@ -32,7 +35,11 @@ public class WorkspacesUI {
 		workspacesCombo = new Combo(parent, SWT.BORDER);
 	}
 	
-	public void feedWorkspacesCombo(Workspaces workspaces){
+	public void feedWorkspacesCombo(){
+		feedWorkspacesCombo(appContext.getAvailableWorkspaces());
+	}
+	
+	private void feedWorkspacesCombo(Workspaces workspaces){
 		String[] workspaceNames = new String[workspaces.size()];
 		
 		for(int i=0; i<workspaces.size(); i++){
@@ -48,6 +55,10 @@ public class WorkspacesUI {
 
 	public Combo getWorkspacesCombo() {
 		return workspacesCombo;
+	}
+	
+	public void clear(){
+		workspacesCombo.removeAll();
 	}
 
 }

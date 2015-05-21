@@ -11,7 +11,7 @@ Feature: Projects review
 		
 	Examples:
     |  email                     |  workspaceName                |  projectsList   |
-    |  "j-kwasnicki@wp.pl"       |  "PWR"                        |  "Project 1"    |
+    |  "j-kwasnicki@wp.pl"       |  "PWR"                        |  "Praca magisterska,To do,Agile,Metryki,Architektura uslug webowych,Projektowanie systemow,Project 1"    |
     |  "j-kwasnicki@wp.pl"       |  "PWR2"                       |  "Project2"     |
 	
 	Scenario Outline: Choose project
